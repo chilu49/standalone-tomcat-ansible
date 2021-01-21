@@ -1,6 +1,6 @@
 ---
-- name: Install Java 1.7
-  yum: name=java-1.7.0-openjdk state=present
+- name: Install Java 1.8
+  yum: name=java-1.8.0-openjdk state=present
 
 - name: add group "tomcat"
   group: name=tomcat
@@ -48,6 +48,12 @@
 - name: insert firewalld rule for tomcat https port
   firewalld: port={{ https_port }}/tcp permanent=true state=enabled immediate=yes
   when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+   
+- name: stop firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
 
 - name: wait for tomcat to start
   wait_for: port={{http_port}}
